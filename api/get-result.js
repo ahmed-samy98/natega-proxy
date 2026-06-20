@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const targetUrl = 'https://natiga.edudk.net/P20262026/public/index.html'; 
+        const targetUrl = 'https://natiga.edudk.net/P20262026/public/'; 
         
         // تعديل برمجى هام: صياغة البيانات بشكل Form URL Encoded متوافق مع سيرفرات PHP
         const params = new URLSearchParams();
