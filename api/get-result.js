@@ -16,15 +16,15 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const targetUrl = 'https://natiga.edudk.net/P20262026/public/'; 
+        // الرابط المباشر الصحيح للمديرية
+        const targetUrl = 'https://natiga.edudk.net/P20262026/public/index.html'; 
         
-        // تعديل برمجى هام: صياغة البيانات بشكل Form URL Encoded متوافق مع سيرفرات PHP
-        const params = new URLSearchParams();
-        params.append('seat_no', seat_no);
-        
-        const response = await axios.post(targetUrl, params, {
+        // تعديل تقني حاسم: استخدام طلب GET بدلاً من POST لتجنب خطأ 405 نهائياً
+        const response = await axios.get(targetUrl, {
+            params: {
+                seat_no: seat_no
+            },
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             },
             timeout: 10000 // مهلة الاتصال 10 ثوانٍ
@@ -35,6 +35,7 @@ module.exports = async (req, res) => {
         let studentName = 'غير معروف';
         let totalScore = 'غير معروف';
 
+        // الكود الذكي لاستخراج البيانات
         $('td, th, span, div, p').each((index, element) => {
             const text = $(element).text().trim();
             
@@ -70,7 +71,6 @@ module.exports = async (req, res) => {
         });
 
     } catch (error) {
-        // قمت بإضافة تفاصيل الخطأ هنا لكي نعرف سبب المشكلة بدقة
         return res.status(500).json({ 
             error: 'حدث خطأ أثناء الاتصال بسيرفر المديرية', 
             details: error.message 
