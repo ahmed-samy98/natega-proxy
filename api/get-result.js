@@ -18,7 +18,6 @@ module.exports = async (req, res) => {
 
         const $ = cheerio.load(response.data);
         
-        // 1. جلب تفاصيل كود الفورم (الـ Form Action)
         const formAction = $('form').attr('action') || 'لا يوجد أكشن مباشر للفورم';
         const formMethod = $('form').attr('method') || 'لا يوجد ميثود';
         const formInputs = [];
@@ -30,25 +29,24 @@ module.exports = async (req, res) => {
             });
         });
 
-        // 2. جلب وتتبع أكواد الجافا سكريبت (scripts) المكتوبة بالصفحة لمعرفة مسار الأجاكس (AJAX URL)
         const scripts = [];
         $('script').each((i, el) => {
             const src = $(el).attr('src');
             const content = $(el).html();
             if (src) {
                 scripts.push({ type: 'ملف خارجي', src: src });
-            } else if (content && (content.includes('seat') || content.includes('ajax') || content.includes('post'))) {
-                scripts.push({ type: 'كود داخلي', content: content.substring(0, 1500) }); // أول 1500 حرف
+            } else if (content && (content.includes('seat') || content.includes('ajax') || content.includes('fetch') || content.includes('post'))) {
+                // تعديل فني: إرجاع كود الجافا سكريبت بالكامل بدون أي اقتطاع
+                scripts.push({ type: 'كود داخلي', content: content }); 
             }
         });
 
-        // إرجاع خريطة الفحص الفنية كاملة لك
         return res.status(200).json({
             formAction: formAction,
             formMethod: formMethod,
             formInputs: formInputs,
             scripts: scripts,
-            htmlSnippet: response.data.substring(0, 1000) // أول 1000 حرف من الـ HTML
+            htmlSnippet: response.data.substring(0, 1000)
         });
 
     } catch (error) {
