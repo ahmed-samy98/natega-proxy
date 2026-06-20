@@ -16,15 +16,16 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // الرابط المباشر الصحيح للمديرية
-        const targetUrl = 'https://natiga.edudk.net/P20262026/public/index.html'; 
+        // التوجيه المباشر لملف المعالجة index.php لتجاوز حظر الـ 405 للسيرفر تماماً ومراسلة قاعدة البيانات
+        const targetUrl = 'https://natiga.edudk.net/P20262026/public/index.php'; 
         
-        // تعديل تقني حاسم: استخدام طلب GET بدلاً من POST لتجنب خطأ 405 نهائياً
-        const response = await axios.get(targetUrl, {
-            params: {
-                seat_no: seat_no
-            },
+        // صياغة البيانات بالشكل الصحيح والسيرفر مستعد لاستقبالها كـ POST
+        const params = new URLSearchParams();
+        params.append('seat_no', seat_no);
+        
+        const response = await axios.post(targetUrl, params, {
             headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             },
             timeout: 10000 // مهلة الاتصال 10 ثوانٍ
@@ -35,7 +36,7 @@ module.exports = async (req, res) => {
         let studentName = 'غير معروف';
         let totalScore = 'غير معروف';
 
-        // الكود الذكي لاستخراج البيانات
+        // كود استخراج البيانات الذكي من الجداول
         $('td, th, span, div, p').each((index, element) => {
             const text = $(element).text().trim();
             
